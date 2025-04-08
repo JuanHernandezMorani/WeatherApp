@@ -1,38 +1,173 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.App-header {
+  background-color: transparent;
+  min-height: auto;
+  font-size: 1.5rem;
   color: white;
+  margin-bottom: 2rem;
+}
+
+.countries_conteiner {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1500px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.weather_data {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 25px;
+  height: 450px;
+  width: 300px;
+  color: white;
+  text-align: center;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
 }
 
 .App-link {
   color: #61dafb;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.container {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(354deg, #137DF5 0%, #14B1F8 100%);
+  width: 100%;
+  max-width: 500px;
+  align-items: center;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+}
+
+.container-2 {
+  background: linear-gradient(354deg, #137DF5 0%, #14B1F8 100%);
+  width: auto;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
+.inner-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  justify-items: center;
+}
+
+.container_date
+{
+  color: white;
+  margin-top: 10px;
+  padding-bottom: 20px;
+  opacity: 80%;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.container_city
+{
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 37px;
+  font-weight: 700;
+  color: white;
+
+}
+
+.container_degree{
+  font-size: 50px;
+  font-weight: 800;
+  color: white;
+  position: relative;
+  top: -20px;
+}
+
+.container_img
+{
+  position: relative;
+  top: -29px;
+}
+
+.degree_icon
+{
+  font-size: 20px;
+}
+
+.country_per
+{
+  position: relative;
+  top: -15px;
+  color: white;
+  font-size: 18px;
+}
+
+.input {
+  border: none;
+  padding: 1rem;
+  border-radius: 0px 0px 0px 15px;
+  background: #e8e8e8;
+  transition: 0.3s;
+  position: relative;
+  top: -2px;
+ }
+ 
+ .input:focus {
+  outline-color: #e8e8e8;
+  background: #e8e8e8;
+  box-shadow: inset 20px 20px 60px #e8e8e8,
+     inset -20px -20px 60px #ffffff;
+  transition: 0.3s;
+ }
+
+
+ button 
+  {
+    color: #090909;
+    padding: 0.7em 0.7em;
+    font-size: 18px;
+    cursor: pointer;
+    border: 1px solid #e8e8e8;
+    transition: all 0.3s;
+}
+
+button:active {
+  color: #666;
+  box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+}
+
+.form
+{
+  margin-top: 3rem;
+}
+
+.weather_data h2,
+.weather_data p {
+  margin-bottom: 0.5rem;
+  color: white;
 }
