@@ -15,7 +15,7 @@ export default function Header({ theme, onToggleTheme, unit, onToggleUnit, onUse
     <header className="app-header">
       <div className="header-inner">
         <a className="brand" href="#top" aria-label="Weather App home">
-          <span className="brand-mark" aria-hidden="true">°</span>
+          <img className="brand-mark" src="/own.png" alt="" aria-hidden="true" />
           <span><strong>Weather App</strong><small>Live forecast dashboard</small></span>
         </a>
         <div className="header-actions">
