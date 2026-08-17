@@ -8,7 +8,7 @@ import DailyForecast from './components/DailyForecast.jsx';
 import SunCard from './components/SunCard.jsx';
 import SavedLocations from './components/SavedLocations.jsx';
 import { DEFAULT_LOCATION, getDemoForecast } from './data/demoWeather.js';
-import { fetchForecast, searchLocations } from './services/openMeteo.js';
+import { fetchForecast, reverseGeocodeLocation, searchLocations } from './services/weatherApi.js';
 import { cacheForecast, readCachedForecast, readStorage, writeStorage } from './core/storage.js';
 import { getWeatherMeta, normalizeLocation } from './core/weather.js';
 
@@ -161,19 +161,29 @@ export default function App() {
     }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocating(false);
-        const next = {
-          id: `geo-${position.coords.latitude.toFixed(4)}-${position.coords.longitude.toFixed(4)}`,
-          name: 'Current location',
-          admin1: '',
-          country: '',
-          countryCode: '',
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          timezone: 'auto',
-        };
-        selectLocation(next);
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        try {
+          const resolved = await reverseGeocodeLocation(latitude, longitude);
+          selectLocation({ ...resolved, latitude, longitude });
+        } catch {
+          const latitudeLabel = `${Math.abs(latitude).toFixed(2)}° ${latitude >= 0 ? 'N' : 'S'}`;
+          const longitudeLabel = `${Math.abs(longitude).toFixed(2)}° ${longitude >= 0 ? 'E' : 'W'}`;
+          selectLocation({
+            id: `geo-${latitude.toFixed(4)}-${longitude.toFixed(4)}`,
+            name: `${latitudeLabel}, ${longitudeLabel}`,
+            admin1: '',
+            country: '',
+            countryCode: '',
+            latitude,
+            longitude,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+          });
+          setRequestError('Weather loaded, but the place name could not be resolved. Showing coordinates instead.');
+        } finally {
+          setLocating(false);
+        }
       },
       (error) => {
         setLocating(false);
@@ -248,7 +258,9 @@ export default function App() {
 
       <footer className="app-footer">
         <span>© 2026 Juan Braian Hernández Morani. All rights reserved.</span>
-        <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather data by Open-Meteo.com</a>
+        <span className="provider-attribution">
+          Weather data: <a href="https://api.met.no/" target="_blank" rel="noreferrer">MET Norway</a> · Location data: <a href="https://www.geoapify.com/" target="_blank" rel="noreferrer">Geoapify</a> / <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>
+        </span>
       </footer>
     </div>
   );

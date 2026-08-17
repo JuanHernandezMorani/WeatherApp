@@ -1,34 +1,53 @@
 # Weather App
 
-A responsive weather dashboard for searching locations worldwide and viewing current conditions, the next 24 hours, and a seven-day forecast.
+A responsive weather dashboard for worldwide location search, current conditions, the next 24 hours, and a seven-day forecast.
 
 ## Features
 
-- Global city and place search with debounced suggestions.
-- Browser geolocation for quick local weather.
-- Current temperature, apparent temperature and condition summary.
-- 24-hour forecast with precipitation probability.
-- Seven-day outlook with high/low temperatures, precipitation and wind.
-- Humidity, pressure, visibility, cloud cover, UV index and wind details.
-- Sunrise and sunset times.
-- Celsius/Fahrenheit display toggle with matching metric/imperial wind, precipitation and visibility formatting.
-- Favorite and recent locations stored locally in the browser.
-- Dark and light themes.
-- Short-lived forecast cache for a more resilient UI.
-- Clearly labeled demonstration fallback if live data is temporarily unavailable.
-- Responsive layouts from compact phones through large desktop displays.
+- Worldwide city autocomplete.
+- **My location** with reverse geocoding, so GPS coordinates resolve to the real city/region name instead of a generic label.
+- Current conditions and derived apparent temperature.
+- 24-hour forecast and seven-day outlook.
+- Humidity, pressure, dew point, fog coverage, cloud cover, precipitation, wind/gusts and UV data when available.
+- Locally calculated sunrise and sunset.
+- Celsius/Fahrenheit display toggle.
+- Favorites and recent locations stored in `localStorage`.
+- Dark/light themes.
+- Short-lived client forecast cache and clearly labeled demo fallback.
+- Responsive layouts from compact phones to large desktops.
 
-## Weather data
+## Providers and public deployment
 
-Live forecasts and location search are provided by [Open-Meteo](https://open-meteo.com/). The application does not require a client-side weather API key.
+The public browser never calls third-party weather/geocoding providers with private credentials. It calls same-origin `/api/*` routes instead.
 
-Open-Meteo weather data is provided under CC BY 4.0 and requires attribution. The application includes the required provider attribution in its footer.
+### Weather — MET Norway
 
-## Development
+Forecast data comes from the global **MET Norway Locationforecast 2.0** API. MET Norway data is open and can be reused commercially with attribution. Requests are made through the server gateway so the application can provide the identifying User-Agent requested by MET Norway and avoid sending each visitor's IP address directly to the weather provider.
+
+### Search and reverse geocoding — Geoapify
+
+Location autocomplete and reverse geocoding use **Geoapify**. Its Free plan supports commercial projects within plan limits, with attribution. The Geoapify key stays server-side and is never bundled into the React client.
+
+The UI includes provider attribution in the footer.
+
+## Required environment
+
+Create `.env.local` for local development:
+
+```env
+GEOAPIFY_API_KEY=your_geoapify_key
+MET_USER_AGENT=WeatherApp/2.1 portfolio-juanbhm-dev.vercel.app
+```
+
+`MET_USER_AGENT` is optional because the project contains a valid default identifier. `GEOAPIFY_API_KEY` is required for search and reverse geocoding.
+
+Create a free Geoapify key from their MyProjects dashboard. Do **not** prefix it with `VITE_`; keeping the variable server-only prevents Vite from exposing it to browser bundles.
+
+## Local development
 
 Requirements:
 
-- Node.js 20.19 or newer
+- Node.js 20.19+
 - npm
 
 ```bash
@@ -36,34 +55,46 @@ npm install
 npm run dev
 ```
 
-Production build:
+The Vite dev server includes a local `/api/*` middleware that uses the same provider layer as production, so `npm run dev` works with `.env.local` without installing a separate backend.
 
-```bash
-npm run build
-npm run preview
+## Vercel deployment
+
+The `/api` directory contains Vercel serverless functions. Add this environment variable in the Vercel project settings:
+
+```text
+GEOAPIFY_API_KEY
 ```
 
-Tests:
+Optionally add `MET_USER_AGENT` if you want a different application identifier.
 
-```bash
-npm test
+Then deploy normally. No weather API key is required for MET Norway.
+
+## API routes
+
+```text
+GET /api/weather?lat=...&lon=...
+GET /api/geocode?q=Buenos%20Aires&lang=es
+GET /api/reverse-geocode?lat=-34.60&lon=-58.38&lang=es
 ```
+
+Coordinates sent to MET Norway are rounded to four decimal places for cache friendliness and provider-policy compliance.
 
 ## Architecture
 
 ```text
-src/
-├── components/    Presentation components
-├── core/          Weather normalization, formatting and storage helpers
-├── data/          Default location and explicit demo fallback
-├── services/      Open-Meteo API integration
-├── App.jsx        Application state and orchestration
-└── styles.css     Responsive theme and layout
+api/                  Vercel serverless endpoints
+server/providers.js   MET Norway + Geoapify provider gateway
+src/components/       Presentation components
+src/core/             Normalization, solar math, formatting and storage
+src/data/             Default location and explicit demo fallback
+src/services/         Browser same-origin API client
+src/App.jsx           Application state/orchestration
+src/styles.css         Responsive theme/layout
 ```
 
 ## Privacy
 
-Favorite and recent locations are stored only in the browser using `localStorage`. Browser geolocation is requested only after the user presses **My location**.
+Favorites and recent locations remain in the browser. Geolocation is requested only after pressing **My location**. Provider calls go through the app's server-side gateway rather than exposing provider credentials in the browser.
 
 ## License
 

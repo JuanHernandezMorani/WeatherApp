@@ -1,9 +1,9 @@
 {
   "name": "weather-app",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
-  "description": "Responsive weather dashboard with location search, current conditions, hourly and 7-day forecasts, local favorites and resilient cached fallback data.",
+  "description": "Responsive weather dashboard using a server-side provider gateway, MET Norway forecasts and Geoapify location services.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
